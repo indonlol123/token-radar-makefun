@@ -3,12 +3,69 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Token Radar: pre-token protocols ranked by implied value</title>
+<title>Token Launch Radar</title>
 <link rel="stylesheet" href="app.css">
 </head>
 <body>
-<a class="skip" href="#board">Skip to the board</a>
-<main id="board" tabindex="-1" aria-busy="true"></main>
+<header class="top">
+  <div class="brand"><span class="mark"></span><span class="brand-name">TOKEN LAUNCH RADAR</span></div>
+  <div class="top-meta"><span id="meta-asof"></span><span id="meta-counts"></span></div>
+</header>
+
+<main class="shell">
+  <section class="lede">
+    <div>
+      <h1>Protocols still waiting on a token, ranked by what that token would be worth.</h1>
+      <p>Every row is a protocol whose DefiLlama record carries no token. Its implied value is its TVL priced at the median mcap/TVL of live-token protocols in its own category — the market's own pricing, not a name on a list — adjusted for seven-day growth and for how long it has run with no token. Click a row for the full model and a farm plan.</p>
+    </div>
+    <div class="facts" id="facts"></div>
+  </section>
+
+  <nav class="tabs" aria-label="Board tabs">
+    <button type="button" data-tab="board" aria-pressed="true">Pre-token</button>
+    <button type="button" data-tab="live" aria-pressed="false">Live token</button>
+    <button type="button" data-tab="setaside" aria-pressed="false">Set aside</button>
+  </nav>
+
+  <section class="controls">
+    <div class="field"><label for="q">Search</label><input id="q" type="search" placeholder="Protocol name or slug"></div>
+    <div class="field"><label for="category">Category</label><select id="category"><option value="">All categories</option></select></div>
+    <div class="field"><label for="chain">Chain</label><select id="chain"><option value="">All chains</option></select></div>
+    <label class="check"><input id="watchonly" type="checkbox"> Watchlist only</label>
+    <span class="count" id="count"></span>
+  </section>
+
+  <section class="panel">
+    <div class="table-wrap"><table id="board">
+      <thead><tr id="head-row"></tr></thead>
+      <tbody id="rows"></tbody>
+    </table></div>
+    <div class="empty" id="empty" hidden><p>No protocols match these filters.</p><button class="button" id="clear-filters" type="button">Clear filters</button></div>
+  </section>
+
+  <section class="panel model">
+    <h2>How a row is priced</h2>
+    <p class="formula">implied = TVL &times; category multiple &times; growth &times; maturity</p>
+    <p>The <b>category multiple</b> is the median mcap/TVL of the live-token protocols in that category (at least 3 priced samples; a $0 market cap carries no price signal and is left out). A thinner category falls back to the <b>global median</b> over every priced live token. Multiples are clamped to 0.05&times;–1.00&times;. <b>Growth</b> is the 7-day TVL change clamped to &minus;60%..+120% at half weight. <b>Maturity</b> runs 0.60 for a listing of yesterday to 1.00 after three years with no token. Nothing here is keyed to a protocol's name.</p>
+    <h3>Calibration — where each multiple comes from</h3>
+    <div class="table-wrap"><table class="calib">
+      <thead><tr><th>Category</th><th class="num">Live samples</th><th class="num">Median mcap/TVL</th><th class="num">Multiple used</th><th>Source</th></tr></thead>
+      <tbody id="calibration"></tbody>
+    </table></div>
+    <p class="note">Live-token protocols are the calibration set, shown on the Live token tab with their own mcap/TVL ratios. The 144 set-aside protocols are the pre-token ones that are wrapped, staked, bridged, exchange or versioned products of a token that already trades — they are not launches, so they are shown apart with the reason each one is set aside.</p>
+  </section>
+</main>
+
+<aside class="detail" id="detail" hidden>
+  <div class="detail-head">
+    <div><span class="sub" id="d-sub"></span><h2 id="d-name"></h2><span class="sub" id="d-slug"></span></div>
+    <button class="close" id="d-close" type="button">Close</button>
+  </div>
+  <div class="detail-section" id="d-facts"></div>
+  <div class="detail-section"><h3>Model breakdown</h3><div class="equation" id="d-model"></div><p class="recompute" id="d-recompute"></p></div>
+  <div class="detail-section"><h3>Farm plan</h3><ol class="steps" id="d-steps"></ol><p class="note">No token is guaranteed — a farm can pay nothing. Claim only from the protocol's own site or official channels.</p></div>
+</aside>
+
 <script src="../data.js"></script>
 <script src="app.js"></script>
 </body>
